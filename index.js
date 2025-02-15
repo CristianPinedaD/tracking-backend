@@ -5,15 +5,25 @@ const fs = require("fs");
 const app = express();
 const PORT = process.env.PORT || 3000;  // Use Railway's assigned port
 
-app.use(cors());
+// Enable CORS for all requests
+const corsOptions = {
+    origin: "*",  // Allow all domains (or restrict to your frontend URLs)
+    methods: ["POST"],
+    allowedHeaders: ["Content-Type"]
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Tracking endpoint
 app.post("/track", (req, res) => {
-    const { website, timestamp, userAgent } = req.body;
+    const { website, timestamp, userAgent, referrer } = req.body;
     const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
 
-    const clickData = { website, timestamp, userAgent, ip };
+    if (!website) {
+        return res.status(400).json({ error: "Missing 'website' field" });
+    }
+
+    const clickData = { website, timestamp, userAgent, referrer, ip };
 
     console.log("Click logged:", clickData);
 
