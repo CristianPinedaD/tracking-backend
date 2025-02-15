@@ -3,7 +3,7 @@ const cors = require("cors");
 const fs = require("fs");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;  // Use Railway's assigned port
 
 app.use(cors());
 app.use(express.json());
